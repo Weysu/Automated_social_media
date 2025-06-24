@@ -1,0 +1,6 @@
+pip install moviepy==1.0.3
+opencv-python
+tqdm
+openai-whisper
+customtkinter
+yt_dlp
