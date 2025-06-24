@@ -1,3 +1,6 @@
+import whisper
+import subprocess
+
 def add_subtitles_to_video(
     video_path,
     output_video="final_video_with_subs.mp4",
@@ -10,8 +13,7 @@ def add_subtitles_to_video(
     Coulour='FFFFFF00',  # White text
     FontName='Arial'  # Font name
 ):
-    import whisper
-    import subprocess
+    
     # Load the Whisper model (choose "base", "small", "medium", or "large")
     model = whisper.load_model("base")
     # Step 1: Transcribe
@@ -38,7 +40,7 @@ def add_subtitles_to_video(
 
     print("✅ Transcription and subtitles done.")
     # FFmpeg subtitles filter styling
-    sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},MarginV={MARGIN_V},BorderCoulour={BorderColour},BorderStyle=3,Coulour={Coulour},FontName={FontName},align={ALIGN}'"
+    sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},MarginV={MARGIN_V},BorderColour={BorderColour},BorderStyle=0,Coulour={Coulour},FontName={FontName},align={ALIGN},BackColour=None'"
     print("🎥 Gravure des sous-titres dans la vidéo...")
     subprocess.run([
         "ffmpeg", "-y",

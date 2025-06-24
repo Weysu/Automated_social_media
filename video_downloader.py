@@ -22,6 +22,7 @@ def get_trending_video_url():
         raise Exception("Aucune vidéo retournée. Vérifie la clé API et les quotas.")
 
     video_id = data["items"][0]["id"]
+    video_id='LkJpNLIaeVk' # A changer pour tester avec une vidéo spécifique
     print (video_id)
     return f"https://www.youtube.com/watch?v={video_id}"
 
