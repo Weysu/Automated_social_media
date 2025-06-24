@@ -34,13 +34,25 @@ with open("subtitles.srt", "w", encoding="utf-8") as f:
 
 print("✅ Transcription and subtitles done.")
 srt_path = "subtitles.srt"
-# Commande FFmpeg
 output_video = "final_video_with_subs.mp4"
+
+# Subtitle style variables (modify as needed)
+FONT_SIZE = 12  # Increase for bigger text
+MARGIN_V = 60   # Distance from bottom (in pixels)
+ALIGN = 'center'  # Options: 'left', 'center', 'right'
+BorderColour = '00000000'  # Black border
+Coulour = 'FFFFFF00'  # White text
+FontName = 'Arial'  # Font name
+
 print("🎥 Gravure des sous-titres dans la vidéo...")
+
+# FFmpeg subtitles filter styling
+# See: https://ffmpeg.org/ffmpeg-filters.html#subtitles for more options
+sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},Alignment=2,MarginV={MARGIN_V},BorderCoulour={BorderColour},BorderStyle=3,Coulour={Coulour},FontName={FontName}'"
 subprocess.run([
     "ffmpeg", "-y",
     "-i", video_path,
-    "-vf", f"subtitles={srt_path}",
+    "-vf", sub_filter,
     "-c:a", "copy",
     output_video
 ])
