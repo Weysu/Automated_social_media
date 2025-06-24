@@ -1,6 +1,7 @@
-pip install moviepy==1.0.3
-opencv-python
-tqdm
-openai-whisper
-customtkinter
-yt_dlp
+whisper==1.1.10
+moviepy==1.0.3
+requests==2.31.0
+yt-dlp==2024.4.9
+selenium==4.21.0
+tqdm==4.66.4
+# opencv-python, customtkinter are not used in the code above, remove if not needed
