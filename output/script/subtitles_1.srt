@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:04,980
+This is a random forest, a powerful machine learning algorithm based on decision trees,
+
+2
+00:00:05,280 --> 00:00:07,690
+and this is tennis, a sport I'm kind of obsessed with.
+
+3
+00:00:07,690 --> 00:00:10,100
+In this video, I'll build a random
+
+4
+00:00:10,100 --> 00:00:15,000
+forest, throw at it a bunch of tennis data, and then make it predict tennis much outcomes,
+
+5
+00:00:15,380 --> 00:00:17,310
+and predict the winner of a big tennis tournament.
+
+6
+00:00:17,310 --> 00:00:19,240
+And we'll see how it performs.
+
+7
+00:00:19,620 --> 00:00:21,160
+But first, I need data.
+
+8
+00:00:21,160 --> 00:00:22,700
+I want a lot of data.
+
+9
+00:00:22,700 --> 00:00:24,240
+I want every single breakpoint,
+
+10
+00:00:24,440 --> 00:00:27,460
+every single double serve, every single double fold, I want everything,
+
+11
+00:00:27,460 --> 00:00:31,860
+throw back hands, throw forehands, throw heights, throw ages, throw that name, throw mom's name,
+
+12
+00:00:32,020 --> 00:00:34,410
+throw grandma's secret lasagna recipe.
+
+13
+00:00:34,410 --> 00:00:36,800
+Yeah, I need that stuff too, man, I'm surviving on noodles
+
+14
+00:00:36,800 --> 00:00:39,530
+over here.
+
+15
+00:00:39,530 --> 00:00:42,260
+And then I found it, the holy grail of tennis data sets, a file so massive,
+
+16
+00:00:42,500 --> 00:00:48,000
+so detailed that opening it, crouched my computer, summoned three statisticians and made my axle
+
+17
+00:00:48,000 --> 00:00:51,240
+back for mercy.
+
+18
+00:00:51,240 --> 00:00:54,480
+The famous 2008 Wimmelon final between Rafa and Adal and Roger Featherer,
+
+19
+00:00:54,480 --> 00:00:57,230
+the longest grindstone final of all time, I got it.
+
+20
+00:00:57,230 --> 00:00:59,980
+Even this one time, this skidbit Rafa and Adal
+
