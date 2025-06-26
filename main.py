@@ -28,7 +28,7 @@ def main():
         start_time = i * 60
         end_time = start_time + 60
 
-        part_output = f"output/final_video_{i+1}.mp4"
+        part_output = f"output/video/final_video_{i+1}.mp4"
         print(f"🧩 Génération clip {i+1} ({start_time}s à {end_time}s)...")
 
         edit_video(
@@ -40,7 +40,7 @@ def main():
         )
 
         # Add subtitles to the generated video
-        subtitled_output = f"output/video/final_video_{i+1}_with_subs.mp4"
+        subtitled_output = f"output/video_sub/final_video_{i+1}_with_subs.mp4"
         transcript_path = f"output/script/transcript_{i+1}.txt"
         srt_path = f"output/script/subtitles_{i+1}.srt"
         add_subtitles_to_video(
@@ -50,10 +50,6 @@ def main():
             srt_path=srt_path,
             FONT_SIZE=12  # Example: bigger text
         )
-
-        caption = f"🎬 Partie {i+1} - Vidéo tendance + satisfying 🤩 #fyp #part{i+1}"
-        print("🚀 Publication sur TikTok...")
-        # upload_to_tiktok(subtitled_output, caption)
 
     print("✅ Tous les clips ont été postés !")
 

@@ -8,7 +8,7 @@ def add_subtitles_to_video(
     transcript_path="transcript.txt",
     srt_path="subtitles.srt",
     FONT_SIZE=12,  # Increase for bigger text
-    MARGIN_V=60,   # Distance from bottom (in pixels)
+    MARGIN_V=90,   # Distance from bottom (in pixels)
     ALIGN='center',  # Options: 'left', 'center', 'right'
     BorderColour='00000000',  # Black border
     Coulour='FFFFFF00',  # White text
@@ -37,7 +37,7 @@ def add_subtitles_to_video(
                 s = t % 60
                 return f"{h:02}:{m:02}:{s:06.3f}".replace('.', ',')
             # Split text by punctuation (., !, ?)
-            chunks = re.split(r'(?<=[.!?]) +', text)
+            chunks = re.split(r'(?<=[,.!?]) +', text)
             n = len(chunks)
             if n == 0:
                 continue
