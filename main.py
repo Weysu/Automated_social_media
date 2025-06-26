@@ -61,12 +61,12 @@ def main():
 
         # Add subtitles to the edited video clip
         subtitled_output = f"output/video_sub/final_video_{idx+1}_with_subs.mp4"
-        add_subtitles_to_video(
+        add_subtitles_to_video( #Param for subtitles (some are not working)
             video_path=part_output,
             srt_path=segment_srt,
             output_video=subtitled_output,
-            FONT_SIZE=12,
-            MARGIN_V=90,
+            FONT_SIZE=16,
+            MARGIN_V=120,
             ALIGN='5',
             BorderColour='00000000',
             Coulour='00FFFF00',
