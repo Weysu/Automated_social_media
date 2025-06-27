@@ -1,18 +1,48 @@
 # main.py
-from video_downloader import download_trending_video
-from video_editor import edit_video
+from video_downloader import download_video, get_trending_video_url, get_satisfying_video_url
+from video_editor import edit_video, merge_videos
 from moviepy.editor import VideoFileClip
 from subtitle import generate_subtitles, add_subtitles_to_video, get_split_points_from_srt, slice_srt, slice_transcript
 import os
 import shutil
 
 def main():
-    print("▶ Téléchargement de la vidéo tendance...")
-    video_path = download_trending_video()
-    satisfying_path = "assets/satisfying.mp4"
-    if not os.path.exists(satisfying_path):
-        raise FileNotFoundError("❌ La vidéo satisfaisante est introuvable : assets/satisfying.mp4")
+    print("▶ Téléchargement de la vidéo principale...")
+    trending_url = get_trending_video_url()
+    video_path = download_video(trending_url, outdir="downloads/video")
+    main_clip = VideoFileClip(video_path)
+    main_duration = main_clip.duration
+    print(f"Durée de la vidéo principale : {main_duration:.2f}s")
 
+    # Télécharger des vidéos satisfaisantes jusqu'à atteindre la durée requise
+    satisfying_dir = "downloads/satisfying"
+    os.makedirs(satisfying_dir, exist_ok=True)
+    satisfying_paths = []
+    total_satisfying_duration = 0.0
+    while total_satisfying_duration < main_duration:
+        satisfying_url = get_satisfying_video_url()
+        sat_path = download_video(satisfying_url, outdir=satisfying_dir)
+        try:
+            sat_clip = VideoFileClip(sat_path)
+            satisfying_paths.append(sat_path)
+            total_satisfying_duration += sat_clip.duration
+            print(f"Ajoutée : {sat_path} ({sat_clip.duration:.2f}s), total = {total_satisfying_duration:.2f}s")
+            sat_clip.close()
+        except Exception as e:
+            print(f"Erreur lors de la lecture de {sat_path} : {e}")
+            continue
+
+    # Fusionner toutes les vidéos satisfaisantes
+    merged_satisfying = os.path.join(satisfying_dir, "merged_satisfying.mp4")
+    merge_videos(satisfying_paths, merged_satisfying)
+    print(f"Vidéo satisfaisante fusionnée : {merged_satisfying}")
+
+    # Supprimer les vidéos individuelles
+    for p in satisfying_paths:
+        if os.path.exists(p):
+            os.remove(p)
+
+    # ...suite du pipeline...
     os.makedirs("output/video", exist_ok=True)
     os.makedirs("output/video_sub", exist_ok=True)
     os.makedirs("output/script", exist_ok=True)
@@ -21,8 +51,6 @@ def main():
     print("📝 Génération des sous-titres complets...")
     full_srt = "output/script/full_subtitles.srt"
     full_transcript = "output/script/full_transcript.txt"
-    
-    # Use the separated function to generate subtitles only
     generate_subtitles(
         video_path=video_path,
         transcript_path=full_transcript,
@@ -47,7 +75,7 @@ def main():
         # Edit video without subtitles first
         edit_video(
             main_clip_path=video_path,
-            satisfying_clip_path=satisfying_path,
+            satisfying_clip_path=merged_satisfying,
             output_path=part_output,
             start=start_time,
             duration=duration

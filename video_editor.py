@@ -1,6 +1,6 @@
 # youtube_to_tiktok_bot/video_editor.py
 
-from moviepy.editor import VideoFileClip, CompositeVideoClip
+from moviepy.editor import VideoFileClip, CompositeVideoClip, concatenate_videoclips
 import os
 
 def split_video(path):
@@ -40,3 +40,14 @@ def edit_video(main_clip_path, satisfying_clip_path, output_path, start=0, durat
 
     # Exporter la vidéo
     final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+
+def merge_videos(video_paths, output_path):
+    """Assemble une liste de vidéos en une seule vidéo continue."""
+    clips = [VideoFileClip(p) for p in video_paths]
+    final_clip = concatenate_videoclips(clips, method="compose")
+    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    for c in clips:
+        c.close()
+    final_clip.close()
+    return output_path

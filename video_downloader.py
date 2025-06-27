@@ -1,7 +1,7 @@
-
 import requests
 import os
 from yt_dlp import YoutubeDL
+import random
 
 YOUTUBE_API_KEY = "AIzaSyDig6Ed6UIRe6uKYJ0ckle7VX1PxEZ8ncE"  # Remplace par ta clé API
 
@@ -27,10 +27,48 @@ def get_trending_video_url():
     return f"https://www.youtube.com/watch?v={video_id}"
 
 
-def download_trending_video():
-    video_url = get_trending_video_url()
-    os.makedirs("downloads", exist_ok=True)
-    output_path = os.path.join("downloads", "%(title).50s.%(ext)s")
+def get_satisfying_video_url():
+    # Liste de requêtes satisfaisantes populaires
+    queries = [
+        "minecraft parkour satisfying",
+        "subway surfers gameplay",
+        "asmr soap cutting",
+        "satisfying cutting compilation",
+        "satisfying cooking short",
+        "perfect loop animation",
+        "pressure washing satisfying",
+        "kinetic sand cutting",
+        "slime asmr",
+        "hydraulic press satisfying"
+    ]
+
+    # Choisir une requête aléatoire
+    selected_query = random.choice(queries)
+
+    # Construire l’URL d’appel à l’API YouTube
+    url = (
+        "https://www.googleapis.com/youtube/v3/search"
+        f"?part=snippet&maxResults=1&type=video&order=viewCount"
+        f"&q={requests.utils.quote(selected_query)}"
+        f"&regionCode=FR&videoDuration=short&key={YOUTUBE_API_KEY}"
+    )
+
+    response = requests.get(url)
+    data = response.json()
+
+    # Gestion d’erreur si aucune vidéo n’est retournée
+    if "items" not in data or len(data["items"]) == 0:
+        raise Exception("Aucune vidéo retournée. Vérifie la clé API, les quotas ou la requête.")
+
+    video_id = data["items"][0]["id"]["videoId"]
+    print(f"[INFO] Query utilisée : {selected_query}")
+    print(f"[INFO] Vidéo ID trouvée : {video_id}")
+    
+    return f"https://www.youtube.com/watch?v={video_id}"
+
+def download_video(video_url, outdir="downloads/video"):  # outdir param par défaut
+    os.makedirs(outdir, exist_ok=True)
+    output_path = os.path.join(outdir, "%(title).50s.%(ext)s")
 
     ydl_opts = {
         'format': 'mp4',
