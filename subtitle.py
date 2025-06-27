@@ -44,16 +44,31 @@ def generate_subtitles(
                 s = t % 60
                 return f"{h:02}:{m:02}:{s:06.3f}".replace('.', ',')
 
-            # Split text into chunks
+            # Split text into chunks by punctuation
             chunks = re.split(r'(?<=[,.!?]) +', text)
-            n = len(chunks)
+            smart_chunks = []
+            for chunk in chunks:
+                words = chunk.strip().split()
+                if len(words) > 6:
+                    # Further split into sub-chunks of 3-4 words, but avoid chunks <2 words except last
+                    i = 0
+                    while i < len(words):
+                        # If last chunk and less than 2 words, merge with previous
+                        if i + 4 >= len(words) and len(words) - i < 2 and smart_chunks:
+                            smart_chunks[-1] += ' ' + ' '.join(words[i:])
+                            break
+                        smart_chunks.append(' '.join(words[i:i+4]))
+                        i += 4
+                else:
+                    smart_chunks.append(chunk.strip())
+            # Remove empty and 1-word chunks except if it's the only chunk
+            smart_chunks = [c for c in smart_chunks if len(c.split()) > 1 or len(smart_chunks) == 1]
+            n = len(smart_chunks)
             if n == 0:
                 continue
-                
             seg_duration = end - start
             chunk_duration = seg_duration / n
-            
-            for i, chunk in enumerate(chunks):
+            for i, chunk in enumerate(smart_chunks):
                 chunk = chunk.strip()
                 if not chunk:
                     continue
