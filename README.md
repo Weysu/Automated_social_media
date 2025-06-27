@@ -20,7 +20,15 @@ Sortie des clips édités avec sous-titres dans output/video_sub/
 
 ## ⚖️ Structure du projet
 
-<pre> ``` . ├── main.py # Script principal ├── subtitle.py # Transcription & génération des sous-titres ├── video_downloader.py # Téléchargement de vidéo YouTube ├── video_editor.py # Fusion des vidéos et découpage ├── assets/ │ └── satisfying.mp4 # Vidéo secondaire utilisée en fond ├── output/ │ ├── video/ # Vidéos découpées et éditées │ ├── video_sub/ # Vidéos avec sous-titres incrustés │ └── script/ # Fichiers SRT et transcriptions ``` </pre>
+<pre> ``` . ├── main.py # Script principal 
+  ├── subtitle.py # Transcription & génération des sous-titres 
+  ├── video_downloader.py # Téléchargement de vidéo YouTube 
+  ├── video_editor.py # Fusion des vidéos et découpage 
+  ├── assets/ 
+  │ └── satisfying.mp4 # Vidéo secondaire utilisée en fond 
+  ├── output/ │ ├── video/ # Vidéos découpées et éditées 
+  │ ├── video_sub/ # Vidéos avec sous-titres incrustés 
+  │ └── script/ # Fichiers SRT et transcriptions ``` </pre>
 
 ## 🚧 Prérequis
 
