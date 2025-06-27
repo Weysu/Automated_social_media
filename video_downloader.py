@@ -2,6 +2,8 @@ import requests
 import os
 from yt_dlp import YoutubeDL
 import random
+from datetime import datetime, timedelta
+
 
 YOUTUBE_API_KEY = "AIzaSyDig6Ed6UIRe6uKYJ0ckle7VX1PxEZ8ncE"  # Remplace par ta clé API
 
@@ -26,45 +28,54 @@ def get_trending_video_url():
     print (video_id)
     return f"https://www.youtube.com/watch?v={video_id}"
 
+# Génère une date aléatoire dans les X derniers jours
+def random_published_after(days_back=90):
+    delta_days = random.randint(0, days_back)
+    date = datetime.utcnow() - timedelta(days=delta_days)
+    return date.strftime("%Y-%m-%dT00:00:00Z")
 
 def get_satisfying_video_url():
-    # Liste de requêtes satisfaisantes populaires
-    queries = [
-        "minecraft parkour satisfying",
-        "subway surfers gameplay",
-        "asmr soap cutting",
-        "satisfying cutting compilation",
-        "satisfying cooking short",
-        "perfect loop animation",
-        "pressure washing satisfying",
-        "kinetic sand cutting",
-        "slime asmr",
-        "hydraulic press satisfying"
+    #Attention les vidéo sont un peut bizzare parfois. 
+    # Combinaisons dynamiques pour plus de diversité
+    subjects = [
+        "minecraft parkour", "subway surfers", "asmr soap", "cutting", 
+        "cooking", "hydraulic press", "slime", "kinetic sand"
     ]
+    styles = [
+        "satisfying", "compilation", "relaxing"
+    ]
+    
+    # Construction de la requête
+    query = f"{random.choice(subjects)} {random.choice(styles)}"
+    published_after = random_published_after(90)  # 90 derniers jours
 
-    # Choisir une requête aléatoire
-    selected_query = random.choice(queries)
-
-    # Construire l’URL d’appel à l’API YouTube
+    # Requête API
     url = (
         "https://www.googleapis.com/youtube/v3/search"
-        f"?part=snippet&maxResults=1&type=video&order=viewCount"
-        f"&q={requests.utils.quote(selected_query)}"
-        f"&regionCode=FR&videoDuration=short&key={YOUTUBE_API_KEY}"
+        f"?part=snippet&type=video&maxResults=10&order=viewCount"
+        f"&q={requests.utils.quote(query)}"
+        f"&regionCode=FR&videoDuration=short"
+        f"&publishedAfter={published_after}"
+        f"&key={YOUTUBE_API_KEY}"
     )
 
     response = requests.get(url)
     data = response.json()
 
-    # Gestion d’erreur si aucune vidéo n’est retournée
+    # Vérification des résultats
     if "items" not in data or len(data["items"]) == 0:
-        raise Exception("Aucune vidéo retournée. Vérifie la clé API, les quotas ou la requête.")
+        raise Exception("Aucune vidéo trouvée. Vérifie les paramètres ou la clé API.")
 
-    video_id = data["items"][0]["id"]["videoId"]
-    print(f"[INFO] Query utilisée : {selected_query}")
-    print(f"[INFO] Vidéo ID trouvée : {video_id}")
-    
+    # Sélection aléatoire parmi les résultats
+    video = random.choice(data["items"])
+    video_id = video["id"]["videoId"]
+
+    print(f"[INFO] Query utilisée : {query}")
+    print(f"[INFO] Date filtre : {published_after}")
+    print(f"[INFO] Vidéo sélectionnée : {video_id}")
+
     return f"https://www.youtube.com/watch?v={video_id}"
+
 
 def download_video(video_url, outdir="downloads/video"):  # outdir param par défaut
     os.makedirs(outdir, exist_ok=True)

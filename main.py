@@ -94,7 +94,7 @@ def main():
             srt_path=segment_srt,
             output_video=subtitled_output,
             FONT_SIZE=16,
-            MARGIN_V=160,
+            MARGIN_V=130,
             ALIGN='5',
             BorderColour='00000000',
             Coulour='00FFFF00',
