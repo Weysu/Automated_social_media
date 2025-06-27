@@ -62,6 +62,7 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 - Génération de sous titre basique
 - Récupération autonome de vidéo
 - Montage autonome 
+- Récupération autonome de vidéo satisfaisante
 
 ## ✍️ To do :
 - Fine tunning des sous titre
@@ -69,5 +70,5 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 - Récupération de vidéo autres que youtube ( série, ... ) 
 - Publication automatiser 
 - Vérifier le nettoyage des fichier temp ( audio, script, ... )
-- Récupération de vidéo Satisfaisante
+- Améliorer le format des vidéo (acquisition automatqiue des vidéo dans un format qui ne match pas bien le montage)
 
