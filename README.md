@@ -71,4 +71,5 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 - Publication automatiser 
 - Vérifier le nettoyage des fichier temp ( audio, script, ... )
 - Améliorer le format des vidéo (acquisition automatqiue des vidéo dans un format qui ne match pas bien le montage)
+- Faire une seule catégorie de vidéo satisfaisante pour une vidéo ( ex video 1 = minecraft parkour, video 2 = subway surfer, video 3 = Satisfying slime)
 
