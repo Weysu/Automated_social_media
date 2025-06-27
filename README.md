@@ -1,4 +1,4 @@
-# Youtube to TikTok Clip Generator
+# Youtube & TikTok Clip Generator
 
 Ce projet automatise le téléchargement d'une vidéo YouTube, la transcription audio, le génération de sous-titres, la découpure intelligente par phrase, et l'édition finale avec une vidéo de fond (ex: "satisfying.mp4") pour produire des clips TikTok prêts à publier.
 
@@ -69,6 +69,5 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 - Récupération de vidéo autres que youtube ( série, ... ) 
 - Publication automatiser 
 - Vérifier le nettoyage des fichier temp ( audio, script, ... )
-  
-
+- Récupération de vidéo Satisfaisante
 
