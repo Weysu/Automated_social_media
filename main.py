@@ -72,12 +72,22 @@ def main():
         part_output = f"output/video/final_video_{idx+1}.mp4"
         print(f"✂️ Clip {idx+1} : {round(start_time, 2)}s -> {round(end_time, 2)}s")
 
-        # Edit video without subtitles first
+        # Extract subclips for this segment
+        main_clip_segment = VideoFileClip(video_path).subclip(start_time, end_time)
+        satisfying_clip_segment = VideoFileClip(merged_satisfying).subclip(start_time, end_time)
+        main_clip_segment_path = f"output/video/main_segment_{idx+1}.mp4"
+        satisfying_clip_segment_path = f"output/video/satisfying_segment_{idx+1}.mp4"
+        main_clip_segment.write_videofile(main_clip_segment_path, codec="libx264", audio_codec="aac")
+        satisfying_clip_segment.write_videofile(satisfying_clip_segment_path, codec="libx264", audio_codec="aac")
+        main_clip_segment.close()
+        satisfying_clip_segment.close()
+
+        # Edit video with the corresponding satisfying segment
         edit_video(
-            main_clip_path=video_path,
-            satisfying_clip_path=merged_satisfying,
+            main_clip_path=main_clip_segment_path,
+            satisfying_clip_path=satisfying_clip_segment_path,
             output_path=part_output,
-            start=start_time,
+            start=0,
             duration=duration
         )
 
@@ -89,7 +99,7 @@ def main():
 
         # Add subtitles to the edited video clip
         subtitled_output = f"output/video_sub/final_video_{idx+1}_with_subs.mp4"
-        add_subtitles_to_video( #Param for subtitles (some are not working)
+        add_subtitles_to_video(
             video_path=part_output,
             srt_path=segment_srt,
             output_video=subtitled_output,
