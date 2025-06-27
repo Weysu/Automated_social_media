@@ -20,17 +20,7 @@ Sortie des clips édités avec sous-titres dans output/video_sub/
 
 ## ⚖️ Structure du projet
 
-.
-├── main.py                     # Script principal
-├── subtitle.py                # Transcription & génération des sous-titres
-├── video_downloader.py        # Téléchargement de vidéo YouTube
-├── video_editor.py            # Fusion des vidéos et découpage
-├── assets/
-│   └── satisfying.mp4         # Vidéo secondaire utilisée en fond
-├── output/
-│   ├── video/                 # Vidéos découpées et éditées
-│   ├── video_sub/             # Vidéos avec sous-titres incrustés
-│   └── script/                # Fichiers SRT et transcriptions
+<pre> ``` . ├── main.py # Script principal ├── subtitle.py # Transcription & génération des sous-titres ├── video_downloader.py # Téléchargement de vidéo YouTube ├── video_editor.py # Fusion des vidéos et découpage ├── assets/ │ └── satisfying.mp4 # Vidéo secondaire utilisée en fond ├── output/ │ ├── video/ # Vidéos découpées et éditées │ ├── video_sub/ # Vidéos avec sous-titres incrustés │ └── script/ # Fichiers SRT et transcriptions ``` </pre>
 
 ## 🚧 Prérequis
 
@@ -50,7 +40,7 @@ Les clips générés avec sous-titres seront sauvegardés dans :
 
 output/video_sub/final_video_X_with_subs.mp4
 
-##📆 Exemple de personnalisation des sous-titres
+## 📆 Exemple de personnalisation des sous-titres
 
 Modifiez les options dans add_subtitles_to_video() ou dans le main:
 
