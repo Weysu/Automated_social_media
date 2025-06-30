@@ -59,17 +59,16 @@ ALIGN='5',              # Centrer verticalement
 MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 
 ## ✅ Fait:
-- Génération de sous titre basique
-- Récupération autonome de vidéo
-- Montage autonome 
-- Récupération autonome de vidéo satisfaisante
-
+  Génération de sous-titres basiques
+  Récupération autonome de vidéo
+  Montage autonome
+  Récupération autonome de vidéo satisfaisante
 ## ✍️ To do :
-- Fine tunning des sous titre
-- Fine tunning des vidéo 
-- Récupération de vidéo autres que youtube ( série, ... ) 
-- Publication automatiser 
-- Vérifier le nettoyage des fichier temp ( audio, script, ... )
-- Améliorer le format des vidéo (acquisition automatqiue des vidéo dans un format qui ne match pas bien le montage)
-- Faire une seule catégorie de vidéo satisfaisante pour une vidéo ( ex video 1 = minecraft parkour, video 2 = subway surfer, video 3 = Satisfying slime)
+  Fine tuning des sous-titres
+  Fine tuning des vidéos
+  Récupération de vidéos autres que YouTube (séries, ...)
+  Publication automatisée
+  Vérifier le nettoyage des fichiers temporaires (audio, script, ...)
+  Améliorer le format des vidéos (acquisition automatique de vidéos dans un format qui ne correspond pas bien au montage)
+  Faire une seule catégorie de vidéo satisfaisante pour une vidéo (ex : vidéo 1 = Minecraft parkour, vidéo 2 = Subway Surfer, vidéo 3 = Satisfying slime)
 
