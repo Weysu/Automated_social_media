@@ -35,45 +35,45 @@ def random_published_after(days_back=90):
     return date.strftime("%Y-%m-%dT00:00:00Z")
 
 def get_satisfying_video_url():
-    #Attention les vidéo sont un peut bizzare parfois. 
-    # Combinaisons dynamiques pour plus de diversité
+    # Attention : les vidéos peuvent varier en qualité
     subjects = [
-        "minecraft parkour", "subway surfers", "asmr soap", "cutting", 
-        "cooking", "hydraulic press", "slime", "kinetic sand"
+        "kinetic sand", "slime", "soap cutting", 
+        "hydraulic press", "asmr cooking", "shaving foam"
     ]
     styles = [
-        "satisfying", "compilation", "relaxing"
+        "satisfying", "asmr", "relaxing", "compilation"
     ]
-    
-    # Construction de la requête
-    query = f"{random.choice(subjects)} {random.choice(styles)}"
+
+    # Construction de la requête dynamique
+    subject = random.choice(subjects)
+    style = random.choice(styles)
+    query = f"{subject} {style}"
     published_after = random_published_after(90)  # 90 derniers jours
 
-    # Requête API
     url = (
         "https://www.googleapis.com/youtube/v3/search"
         f"?part=snippet&type=video&maxResults=10&order=viewCount"
         f"&q={requests.utils.quote(query)}"
-        f"&regionCode=FR&videoDuration=short"
+        f"&regionCode=FR&videoDuration=medium"
         f"&publishedAfter={published_after}"
         f"&key={YOUTUBE_API_KEY}"
     )
 
+    print(f"[INFO] Query utilisée : {query}")
+    print(f"[INFO] Date filtre : {published_after}")
+    print(f"[INFO] Requête complète : {url}")
+
     response = requests.get(url)
     data = response.json()
 
-    # Vérification des résultats
     if "items" not in data or len(data["items"]) == 0:
         raise Exception("Aucune vidéo trouvée. Vérifie les paramètres ou la clé API.")
 
-    # Sélection aléatoire parmi les résultats
+    # Sélection aléatoire
     video = random.choice(data["items"])
     video_id = video["id"]["videoId"]
 
-    print(f"[INFO] Query utilisée : {query}")
-    print(f"[INFO] Date filtre : {published_after}")
     print(f"[INFO] Vidéo sélectionnée : {video_id}")
-
     return f"https://www.youtube.com/watch?v={video_id}"
 
 
@@ -82,10 +82,11 @@ def download_video(video_url, outdir="downloads/video"):  # outdir param par dé
     output_path = os.path.join(outdir, "%(title).50s.%(ext)s")
 
     ydl_opts = {
-        'format': 'mp4',
+        'format': 'mp4', # for way bettter quality : 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
         'outtmpl': output_path,
         'quiet': False,
-        'noplaylist': True
+        'noplaylist': True,
+        'merge_output_format': 'mp4'
     }
 
     with YoutubeDL(ydl_opts) as ydl:
