@@ -44,23 +44,39 @@ def generate_subtitles(
                 s = t % 60
                 return f"{h:02}:{m:02}:{s:06.3f}".replace('.', ',')
 
-            # Split text into chunks by punctuation
-            chunks = re.split(r'(?<=[,.!?]) +', text)
-            smart_chunks = []
-            # Split text into individual words for dynamic, one-word-at-a-time subtitles
+            # List of determiners and short words to group
+            group_words = {
+                "a", "an", "the", "of", "to", "in", "on", "at", "by", "for", "with", "and", "or", "but",
+                "my", "your", "his", "her", "its", "our", "their", "this", "that", "these", "those",
+                "some", "any", "each", "every", "no", "one", "two"
+            }
+
             words = text.split()
             n = len(words)
             if n == 0:
                 continue
             seg_duration = end - start
             word_duration = seg_duration / n
-            for i, word in enumerate(words):
-                word = word.strip()
-                if not word:
-                    continue
-                word_start = start + i * word_duration
-                word_end = min(start + (i + 1) * word_duration, end)
-                f.write(f"{idx}\n{format_time(word_start)} --> {format_time(word_end)}\n{word}\n\n")
+
+            # Group determiners/short words with the next word
+            grouped = []
+            i = 0
+            while i < n:
+                word = words[i]
+                if word.lower() in group_words and i + 1 < n:
+                    grouped.append(f"{word} {words[i+1]}")
+                    i += 2
+                else:
+                    grouped.append(word)
+                    i += 1
+
+            group_n = len(grouped)
+            group_duration = seg_duration / group_n if group_n else 0
+
+            for j, chunk in enumerate(grouped):
+                chunk_start = start + j * group_duration
+                chunk_end = min(start + (j + 1) * group_duration, end)
+                f.write(f"{idx}\n{format_time(chunk_start)} --> {format_time(chunk_end)}\n{chunk}\n\n")
                 idx += 1
 
     print("✅ Transcription and subtitles generated.")
