@@ -47,34 +47,20 @@ def generate_subtitles(
             # Split text into chunks by punctuation
             chunks = re.split(r'(?<=[,.!?]) +', text)
             smart_chunks = []
-            for chunk in chunks:
-                words = chunk.strip().split()
-                if len(words) > 6:
-                    # Further split into sub-chunks of 3-4 words, but avoid chunks <2 words except last
-                    i = 0
-                    while i < len(words):
-                        # If last chunk and less than 2 words, merge with previous
-                        if i + 4 >= len(words) and len(words) - i < 2 and smart_chunks:
-                            smart_chunks[-1] += ' ' + ' '.join(words[i:])
-                            break
-                        smart_chunks.append(' '.join(words[i:i+4]))
-                        i += 4
-                else:
-                    smart_chunks.append(chunk.strip())
-            # Remove empty and 1-word chunks except if it's the only chunk
-            smart_chunks = [c for c in smart_chunks if len(c.split()) > 1 or len(smart_chunks) == 1]
-            n = len(smart_chunks)
+            # Split text into individual words for dynamic, one-word-at-a-time subtitles
+            words = text.split()
+            n = len(words)
             if n == 0:
                 continue
             seg_duration = end - start
-            chunk_duration = seg_duration / n
-            for i, chunk in enumerate(smart_chunks):
-                chunk = chunk.strip()
-                if not chunk:
+            word_duration = seg_duration / n
+            for i, word in enumerate(words):
+                word = word.strip()
+                if not word:
                     continue
-                chunk_start = start + i * chunk_duration
-                chunk_end = min(start + (i + 1) * chunk_duration, end)
-                f.write(f"{idx}\n{format_time(chunk_start)} --> {format_time(chunk_end)}\n{chunk}\n\n")
+                word_start = start + i * word_duration
+                word_end = min(start + (i + 1) * word_duration, end)
+                f.write(f"{idx}\n{format_time(word_start)} --> {format_time(word_end)}\n{word}\n\n")
                 idx += 1
 
     print("✅ Transcription and subtitles generated.")
@@ -109,7 +95,7 @@ def add_subtitles_to_video(
     Returns:
         str: Path to the output video file
     """
-    sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},MarginV={MARGIN_V},BorderColour={BorderColour},BorderStyle=0,Coulour={Coulour},FontName={FontName},align={ALIGN},BackColour=None'"
+    sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},MarginV={MARGIN_V},OutlineColour={BorderColour},BorderStyle=0,PrimaryColour={Coulour},FontName={FontName},Alignement={ALIGN}'"
     
     subprocess.run([
         "ffmpeg", "-y",

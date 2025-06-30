@@ -103,11 +103,11 @@ def main():
             video_path=part_output,
             srt_path=segment_srt,
             output_video=subtitled_output,
-            FONT_SIZE=16,
+            FONT_SIZE=20,
             MARGIN_V=130,
             ALIGN='5',
             BorderColour='00000000',
-            Coulour='00FFFF00',
+            Coulour='&H0000FFFF',
             FontName='Arial'
         )
         start_time = end_time

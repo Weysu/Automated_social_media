@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timedelta
 
 
-YOUTUBE_API_KEY = "AIzaSyDig6Ed6UIRe6uKYJ0ckle7VX1PxEZ8ncE"  # Remplace par ta clé API
+YOUTUBE_API_KEY = "AIzaSyC0o_cxY7pfPg84iFEJD7_0RGjFesKgw5A"  # Remplace par ta clé API
 
 def get_trending_video_url():
     url = (
