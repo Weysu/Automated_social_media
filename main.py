@@ -6,7 +6,7 @@ from subtitle import generate_subtitles, add_subtitles_to_video, get_split_point
 import os
 import shutil
 
-def main():
+def split_video():
     print("▶ Téléchargement de la vidéo principale...")
     trending_url = get_trending_video_url()
     video_path = download_video(trending_url, outdir="downloads/video")
@@ -114,5 +114,21 @@ def main():
 
     print("✅ Tous les clips ont été traités !")
 
+def blured_video():
+    """
+    Télécharge la vidéo principale et applique l'effet fond flou + 1:1 centré.
+    """
+    from video_editor import edit_video_blur_background
+    print("▶ Téléchargement de la vidéo principale...")
+    trending_url = get_trending_video_url()
+    video_path = download_video(trending_url, outdir="downloads/video")
+    print(f"Vidéo téléchargée : {video_path}")
+    os.makedirs("output/video", exist_ok=True)
+    output_path = os.path.join("output/video", "blured_video.mp4")
+    print("🎬 Application de l'effet flou + 1:1 centré...")
+    edit_video_blur_background(video_path, output_path)
+    print(f"✅ Vidéo exportée : {output_path}")
+    return output_path
+
 if __name__ == "__main__":
-    main()
+    blured_video()

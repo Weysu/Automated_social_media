@@ -1,5 +1,5 @@
 # youtube_to_tiktok_bot/video_editor.py
-
+import subprocess
 from moviepy.editor import VideoFileClip, CompositeVideoClip, concatenate_videoclips
 import os
 
@@ -50,4 +50,58 @@ def merge_videos(video_paths, output_path):
     for c in clips:
         c.close()
     final_clip.close()
+    return output_path
+
+def edit_video_blur_background(input_path, output_path, duration=60):
+    """
+    Crée une vidéo verticale (9:16) avec un vrai flou de fond (via ffmpeg)
+    et un crop carré centré en premier plan.
+    """
+    width = 1080
+    height = 1920
+    square_size = width
+    blurred_path = "temp_blurred.mp4"
+
+    # Générer le fond flouté avec ffmpeg
+    ffmpeg_blur_command = [
+        "ffmpeg",
+        "-y",  # overwrite
+        "-i", input_path,
+        "-t", str(duration),
+        "-vf", "gblur=sigma=20,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920",
+        "-an",  # no audio
+        blurred_path
+    ]
+    subprocess.run(ffmpeg_blur_command, check=True)
+
+    # Charger les clips
+    base_clip = VideoFileClip(input_path).subclip(0, duration)
+    blurred_clip = VideoFileClip(blurred_path)
+
+    # Crop 1:1 centré
+    min_side = min(base_clip.w, base_clip.h)
+    x_center = base_clip.w // 2
+    y_center = base_clip.h // 2
+    x1 = x_center - square_size // 2
+    y1 = y_center - square_size // 2
+    x2 = x1 + square_size
+    y2 = y1 + square_size
+
+    square_clip = (
+        base_clip.crop(x1=max(0, x1), y1=max(0, y1), x2=min(base_clip.w, x2), y2=min(base_clip.h, y2))
+        .resize((square_size, square_size))
+        .set_position(("center", (height - square_size) // 2))
+    )
+
+    # Composer final
+    final_clip = CompositeVideoClip([blurred_clip.set_position((0, 0)), square_clip], size=(width, height))
+    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+    # Cleanup
+    base_clip.close()
+    blurred_clip.close()
+    square_clip.close()
+    final_clip.close()
+    os.remove(blurred_path)
+
     return output_path
