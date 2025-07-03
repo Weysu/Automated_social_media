@@ -56,11 +56,13 @@ def edit_video_blur_background(input_path, output_path, duration=60):
     """
     Crée une vidéo verticale (9:16) avec un vrai flou de fond (via ffmpeg)
     et un crop carré centré en premier plan.
+    Ajoute ending.mp4 à la fin de la vidéo finale.
     """
     width = 1080
     height = 1920
     square_size = width
     blurred_path = "temp_blurred.mp4"
+    temp_final_path = "temp_final_with_blur.mp4"
 
     # Générer le fond flouté avec ffmpeg
     ffmpeg_blur_command = [
@@ -95,7 +97,11 @@ def edit_video_blur_background(input_path, output_path, duration=60):
 
     # Composer final
     final_clip = CompositeVideoClip([blurred_clip.set_position((0, 0)), square_clip], size=(width, height))
-    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    final_clip.write_videofile(temp_final_path, codec="libx264", audio_codec="aac")
+
+    # Ajouter ending.mp4 à la fin
+    ending_path = "downloads/satisfying/video/ending.mp4"
+    merge_videos([temp_final_path, ending_path], output_path)
 
     # Cleanup
     base_clip.close()
@@ -103,5 +109,6 @@ def edit_video_blur_background(input_path, output_path, duration=60):
     square_clip.close()
     final_clip.close()
     os.remove(blurred_path)
+    os.remove(temp_final_path)
 
     return output_path
