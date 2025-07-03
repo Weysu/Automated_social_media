@@ -100,7 +100,7 @@ def edit_video_blur_background(input_path, output_path, duration=60):
     final_clip.write_videofile(temp_final_path, codec="libx264", audio_codec="aac")
 
     # Ajouter ending.mp4 à la fin
-    ending_path = "downloads/satisfying/video/ending.mp4"
+    ending_path = r"downloads\video\ending.mp4"
     merge_videos([temp_final_path, ending_path], output_path)
 
     # Cleanup
