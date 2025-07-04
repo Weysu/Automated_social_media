@@ -1,35 +1,57 @@
-# subtitle.py
+"""
+subtitle.py
+Subtitle and transcript generation utilities for video processing.
+- Generate subtitles using Whisper
+- Add subtitles to video using ffmpeg
+- Split SRT and transcript files for video segments
+- Utility functions for SRT parsing and splitting
+"""
 import whisper
 import subprocess
 import re
 from typing import List
 from datetime import timedelta
 
+def format_time(t):
+    '''Format seconds to SRT time string.'''
+    h = int(t // 3600)
+    m = int((t % 3600) // 60)
+    s = t % 60
+    return f"{h:02}:{m:02}:{s:06.3f}".replace('.', ',')
+
+def group_words_func(words):
+    '''Group determiners and short words with the next word for better subtitle segmentation.'''
+    group_words = {
+        "a", "an", "the", "of", "to", "in", "on", "at", "by", "for", "with", "and", "or", "but",
+        "my", "your", "his", "her", "its", "our", "their", "this", "that", "these", "those",
+        "some", "any", "each", "every", "no", "one", "two"
+    }
+    grouped = []
+    i = 0
+    n = len(words)
+    while i < n:
+        word = words[i]
+        if word.lower() in group_words and i + 1 < n:
+            grouped.append(f"{word} {words[i+1]}")
+            i += 2
+        else:
+            grouped.append(word)
+            i += 1
+    return grouped
+
 def generate_subtitles(
     video_path,
     transcript_path="transcript.txt",
     srt_path="subtitles.srt"
 ):
-    """
-    Generate subtitles from a video file using Whisper.
-    
-    Args:
-        video_path (str): Path to the input video file
-        transcript_path (str): Path to save the transcript text file
-        srt_path (str): Path to save the SRT subtitle file
-        
-    Returns:
-        tuple: (transcript_path, srt_path) - paths to the generated files
-    """
-    # Load Whisper model and transcribe
+    '''
+    Generate subtitles and transcript from a video file using Whisper.
+    Returns: (transcript_path, srt_path)
+    '''
     model = whisper.load_model("base")
     result = model.transcribe(video_path, word_timestamps=True)
-
-    # Save transcript
     with open(transcript_path, "w", encoding="utf-8") as f:
         f.write(result["text"])
-
-    # Generate SRT file
     segments = result["segments"]
     with open(srt_path, "w", encoding="utf-8") as f:
         idx = 1
@@ -37,51 +59,20 @@ def generate_subtitles(
             start = seg['start']
             end = seg['end']
             text = seg['text'].strip()
-
-            def format_time(t):
-                h = int(t // 3600)
-                m = int((t % 3600) // 60)
-                s = t % 60
-                return f"{h:02}:{m:02}:{s:06.3f}".replace('.', ',')
-
-            # List of determiners and short words to group
-            group_words = {
-                "a", "an", "the", "of", "to", "in", "on", "at", "by", "for", "with", "and", "or", "but",
-                "my", "your", "his", "her", "its", "our", "their", "this", "that", "these", "those",
-                "some", "any", "each", "every", "no", "one", "two"
-            }
-
             words = text.split()
             n = len(words)
             if n == 0:
                 continue
             seg_duration = end - start
-            word_duration = seg_duration / n
-
-            # Group determiners/short words with the next word
-            grouped = []
-            i = 0
-            while i < n:
-                word = words[i]
-                if word.lower() in group_words and i + 1 < n:
-                    grouped.append(f"{word} {words[i+1]}")
-                    i += 2
-                else:
-                    grouped.append(word)
-                    i += 1
-
+            grouped = group_words_func(words)
             group_n = len(grouped)
             group_duration = seg_duration / group_n if group_n else 0
-
             for j, chunk in enumerate(grouped):
                 chunk_start = start + j * group_duration
                 chunk_end = min(start + (j + 1) * group_duration, end)
                 f.write(f"{idx}\n{format_time(chunk_start)} --> {format_time(chunk_end)}\n{chunk}\n\n")
                 idx += 1
-
-    print("✅ Transcription and subtitles generated.")
     return transcript_path, srt_path
-
 
 def add_subtitles_to_video(
     video_path,
@@ -94,25 +85,10 @@ def add_subtitles_to_video(
     Coulour='FFFFFF00',
     FontName='Arial'
 ):
-    """
-    Add existing subtitles to a video file using FFmpeg.
-    
-    Args:
-        video_path (str): Path to the input video file
-        srt_path (str): Path to the SRT subtitle file
-        output_video (str): Path for the output video with subtitles
-        FONT_SIZE (int): Font size for subtitles
-        MARGIN_V (int): Vertical margin for subtitles
-        ALIGN (str): Text alignment ('center', 'left', 'right')
-        BorderColour (str): Border color in hex format
-        Coulour (str): Text color in hex format
-        FontName (str): Font name for subtitles
-        
-    Returns:
-        str: Path to the output video file
-    """
+    '''
+    Add SRT subtitles to a video using ffmpeg.
+    '''
     sub_filter = f"subtitles={srt_path}:force_style='Fontsize={FONT_SIZE},MarginV={MARGIN_V},OutlineColour={BorderColour},BorderStyle=0,PrimaryColour={Coulour},FontName={FontName},Alignement={ALIGN}'"
-    
     subprocess.run([
         "ffmpeg", "-y",
         "-i", video_path,
@@ -120,45 +96,39 @@ def add_subtitles_to_video(
         "-c:a", "copy",
         output_video
     ])
-    
-    print(f"✅ Video with subtitles generated: {output_video}")
     return output_video
 
 def parse_srt_time(srt_time: str) -> float:
-    # srt_time: "HH:MM:SS,mmm"
+    '''Parse SRT time string to seconds.'''
     h, m, rest = srt_time.split(':')
     s, ms = rest.split(',')
     return int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
 
 def get_split_points_from_srt(srt_path: str, min_duration: float = 60.0) -> List[float]:
+    '''
+    Get split points (in seconds) from SRT file based on sentence ends and minimum duration.
+    '''
     split_points = []
     last_split = 0.0
-
     with open(srt_path, encoding="utf-8") as f:
         entries = f.read().split('\n\n')
-
     for entry in entries:
         lines = entry.strip().split('\n')
         if len(lines) < 3:
             continue
-
         time_range = lines[1]
         text = " ".join(lines[2:]).strip()
-
         if not re.search(r'[.!?]\s*$', text):
-            continue  # Not a sentence end
-
+            continue
         _, end_str = time_range.split(' --> ')
         end_sec = parse_srt_time(end_str)
-
         if end_sec - last_split >= min_duration:
             split_points.append(end_sec)
             last_split = end_sec
-
     return split_points
 
 def slice_srt(srt_path, out_path, start_time, end_time):
-    """Extract only the SRT entries within [start_time, end_time] and write to out_path."""
+    '''Extract SRT entries within [start_time, end_time] and write to out_path.'''
     with open(srt_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     entries = []
@@ -188,7 +158,6 @@ def slice_srt(srt_path, out_path, start_time, end_time):
         s = parse_srt_time(start_str)
         e = parse_srt_time(end_str)
         if e > start_time and s < end_time:
-            # Adjust times to segment
             new_s = max(s, start_time) - start_time
             new_e = min(e, end_time) - start_time
             def fmt(t):
@@ -208,8 +177,7 @@ def slice_srt(srt_path, out_path, start_time, end_time):
             f.write('\n')
 
 def slice_transcript(transcript_path, out_path, start_time, end_time, srt_path):
-    """Extract only the transcript lines for the segment using the SRT as reference."""
-    # This is a simple approach: for each SRT entry in the segment, collect its text.
+    '''Extract transcript lines for the segment using the SRT as reference.'''
     with open(srt_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     texts = []

@@ -1,23 +1,36 @@
+"""
+youtube_uploader.py
+YouTube video uploader using the YouTube Data API v3.
+- Authenticate with OAuth2
+- Upload videos with metadata
+- Save and refresh credentials
+"""
+
 import os
-import google.auth
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import pickle
 from google.auth.transport.requests import Request
 from configparser import ConfigParser
+import json
+import tempfile
 
-# Scopes required for uploading video
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 
 def get_youtube_config():
+    '''Read YouTube API credentials from config file.'''
     config = ConfigParser()
     config.read(r'credential/youtube_credential.ini')
     return config['youtube']
 
 
 def authenticate_youtube():
+    '''
+    Authenticate and return a YouTube API client.
+    Handles token refresh and OAuth2 flow.
+    '''
     credentials = None
     token_path = r'credential/token_youtube.pkl'
     config = get_youtube_config()
@@ -32,28 +45,21 @@ def authenticate_youtube():
             "redirect_uris": [config.get('redirect_uris')]
         }
     }
-    # Write to a temp file for OAuth flow
-    import json
-    import tempfile
     with tempfile.NamedTemporaryFile('w+', delete=False, suffix='.json') as tmp:
         json.dump(client_secret_dict, tmp)
         tmp.flush()
         client_secret_path = tmp.name
 
-    # Charger les identifiants déjà existants
     if os.path.exists(token_path):
         with open(token_path, 'rb') as token_file:
             credentials = pickle.load(token_file)
 
-    # Rafraîchir les identifiants si expirés
     if credentials and credentials.expired and credentials.refresh_token:
         credentials.refresh(Request())
 
-    # Sinon, lancer le flow OAuth
     if not credentials or not credentials.valid:
         flow = InstalledAppFlow.from_client_secrets_file(client_secret_path, SCOPES)
         credentials = flow.run_local_server(port=0)
-        # Sauvegarder les nouveaux identifiants
         with open(token_path, 'wb') as token_file:
             pickle.dump(credentials, token_file)
 
@@ -61,12 +67,15 @@ def authenticate_youtube():
     return youtube
 
 
-def upload_video(youtube, file_path, title, description, tags, category_id='22', privacy_status='private'):
+def upload_video(youtube, file_path, title, description, tags=None, category_id='22', privacy_status='private'):
+    '''
+    Upload a video to YouTube with metadata.
+    '''
     request_body = {
         'snippet': {
             'title': title,
             'description': description,
-            'tags': tags,
+            'tags': tags or [],
             'categoryId': category_id
         },
         'status': {
@@ -90,7 +99,6 @@ def upload_video(youtube, file_path, title, description, tags, category_id='22',
     print(f"Upload complete! Video ID: {response['id']}")
     return response['id']
 
-# === Example usage ===
 if __name__ == '__main__':
     yt = authenticate_youtube()
     upload_video(
