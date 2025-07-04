@@ -63,12 +63,14 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
   Récupération autonome de vidéo
   Montage autonome
   Récupération autonome de vidéo satisfaisante
+  .gitignore
+  Publication automatisée (youtube)
+
 ## ✍️ To do :
   Fine tuning des sous-titres
   Fine tuning des vidéos
+  
   Récupération de vidéos autres que YouTube (séries, ...)
-  Publication automatisée
   Vérifier le nettoyage des fichiers temporaires (audio, script, ...)
-  Améliorer le format des vidéos (acquisition automatique de vidéos dans un format qui ne correspond pas bien au montage)
-  Faire une seule catégorie de vidéo satisfaisante pour une vidéo (ex : vidéo 1 = Minecraft parkour, vidéo 2 = Subway Surfer, vidéo 3 = Satisfying slime)
+  
 
