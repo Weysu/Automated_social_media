@@ -3,9 +3,12 @@ import os
 from yt_dlp import YoutubeDL
 import random
 from datetime import datetime, timedelta
+import configparser
 
 
-YOUTUBE_API_KEY = "AIzaSyC0o_cxY7pfPg84iFEJD7_0RGjFesKgw5A"  # Remplace par ta clé API
+config = configparser.ConfigParser()
+config.read('youtube_credential.ini')
+YOUTUBE_API_KEY = config.get('youtube', 'api_key')
 
 def get_trending_video_url():
     url = (
