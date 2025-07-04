@@ -57,6 +57,7 @@ Coulour='00FFFF00',     # Jaune
 BorderStyle=3,          # Boite opaque
 ALIGN='5',              # Centrer verticalement
 MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
+Les sous titres sont mal gérer en FR (ou autre que ENG)
 
 ## ✅ Fait:
   Génération de sous-titres basiques
@@ -69,7 +70,7 @@ MARGIN_V=0,             # Hauteur depuis le bas (0 = milieu si ALIGN=5)
 ## ✍️ To do :
   Fine tuning des sous-titres
   Fine tuning des vidéos
-  
+
   Récupération de vidéos autres que YouTube (séries, ...)
   Vérifier le nettoyage des fichiers temporaires (audio, script, ...)
   
