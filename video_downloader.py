@@ -24,7 +24,7 @@ def get_trending_video_url():
         "?part=snippet"
         "&chart=mostPopular"
         "&maxResults=1"
-        "&regionCode=EN"
+        "&regionCode=US" #Région du monde pas langue
         f"&key={YOUTUBE_API_KEY}"
     )
     response = requests.get(url)
